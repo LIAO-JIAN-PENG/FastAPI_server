@@ -11,9 +11,6 @@ class GenderType(Enum):
     Male = '男'
     Female = '女'
 
-    def __repr__(self):
-        return self.__name__
-
 
 class PersonType(Enum):
     Expert = '業界專家'
@@ -21,9 +18,6 @@ class PersonType(Enum):
     DeptProf = '系上教師'
     OtherProf = '校外教師'
     Student = '學生'
-
-    def __repr__(self):
-        return self.__name__
 
 
 class MeetingType(Enum):
@@ -34,17 +28,11 @@ class MeetingType(Enum):
     DeptDevelopment = '系發展協會'
     Other = '其他'
 
-    def __repr__(self):
-        return self.__name__
-
 
 class StudentProgramType(Enum):
     UnderGraduate = '大學部'
     Graduate = '碩士班'
     PhD = '博士班'
-
-    def __repr__(self):
-        return self.__name__
 
 
 class StudentStudyYearType(Enum):
@@ -56,17 +44,11 @@ class StudentStudyYearType(Enum):
     SixthYear = '六年級'
     SeventhYear = '七年級'
 
-    def __repr__(self):
-        return self.__name__
-
 
 class MotionStatusType(Enum):
     InDiscussion = '討論中'
     InExecution = '執行中'
     Closed = '結案'
-
-    def __repr__(self):
-        return self.__name__
 
 
 class Meeting(Base):
