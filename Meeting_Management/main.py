@@ -1,8 +1,18 @@
-from Meeting_Management import app
+from fastapi import FastAPI
+from . import models
+from .database import engine
+from .routers import meeting, person
+
+app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
 
 
-@app.get("/")
+@app.get('/')
 def home():
-    return {"Hello": "World"}
+    return 'hello'
+
+
+app.include_router(meeting.router)
+app.include_router(person.router)
 
 

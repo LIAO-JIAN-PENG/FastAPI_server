@@ -1,6 +1,7 @@
 from datetime import datetime
+from enum import Enum
 
-from sqlalchemy import Column, Integer, String, Enum, DateTime, Boolean, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Enum as dbEnum, DateTime, Boolean, ForeignKey, Text
 from Meeting_Management.database import Base
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship, backref
@@ -10,6 +11,9 @@ class GenderType(Enum):
     Male = '男'
     Female = '女'
 
+    def __repr__(self):
+        return self.__name__
+
 
 class PersonType(Enum):
     Expert = '業界專家'
@@ -17,6 +21,9 @@ class PersonType(Enum):
     DeptProf = '系上教師'
     OtherProf = '校外教師'
     Student = '學生'
+
+    def __repr__(self):
+        return self.__name__
 
 
 class MeetingType(Enum):
@@ -27,11 +34,17 @@ class MeetingType(Enum):
     DeptDevelopment = '系發展協會'
     Other = '其他'
 
+    def __repr__(self):
+        return self.__name__
+
 
 class StudentProgramType(Enum):
     UnderGraduate = '大學部'
     Graduate = '碩士班'
     PhD = '博士班'
+
+    def __repr__(self):
+        return self.__name__
 
 
 class StudentStudyYearType(Enum):
@@ -43,11 +56,17 @@ class StudentStudyYearType(Enum):
     SixthYear = '六年級'
     SeventhYear = '七年級'
 
+    def __repr__(self):
+        return self.__name__
+
 
 class MotionStatusType(Enum):
     InDiscussion = '討論中'
     InExecution = '執行中'
     Closed = '結案'
+
+    def __repr__(self):
+        return self.__name__
 
 
 class Meeting(Base):
@@ -55,7 +74,7 @@ class Meeting(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
-    type = Column(Enum(MeetingType), nullable=False)
+    type = Column(dbEnum(MeetingType), nullable=False)
     time = Column(DateTime, nullable=False, default=datetime.utcnow())
     location = Column(String(50), nullable=False)
     is_draft = Column(Boolean, nullable=False, default=True)
@@ -85,12 +104,14 @@ class Meeting(Base):
 
 
 class Person(Base):
+    __tablename__ = 'person'
+
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
-    gender = Column(Enum(GenderType), nullable=False)
+    gender = Column(dbEnum(GenderType), nullable=False)
     phone = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False, unique=True)
-    type = Column(Enum(PersonType), nullable=False)
+    type = Column(dbEnum(PersonType), nullable=False)
 
     expert_info = relationship('Expert', backref='basic_info', uselist=False, cascade='all, delete-orphan')
     assistant_info = relationship('Assistant', backref='basic_info', uselist=False, cascade='all, delete-orphan')
@@ -146,6 +167,8 @@ class Person(Base):
 
 
 class Attendee(Base):
+    __tablename__ = 'attendee'
+
     meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     meeting = relationship(Meeting, backref=backref('attendee_association', cascade='all, delete-orphan'))
@@ -159,6 +182,8 @@ class Attendee(Base):
 
 
 class Expert(Base):
+    __tablename__ = 'expert'
+
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     company_name = Column(String(50), nullable=False)
     job_title = Column(String(50), nullable=False)
@@ -168,17 +193,23 @@ class Expert(Base):
 
 
 class Assistant(Base):
+    __tablename__ = 'assistant'
+
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     office_tel = Column(String(20))
 
 
 class DeptProf(Base):
+    __tablename__ = 'deptProf'
+
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     job_title = Column(String(50), nullable=False)
     office_tel = Column(String(20))
 
 
 class OtherProf(Base):
+    __tablename__ = 'otherProf'
+
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     univ_name = Column(String(50), nullable=False)
     dept_name = Column(String(50), nullable=False)
@@ -189,13 +220,17 @@ class OtherProf(Base):
 
 
 class Student(Base):
+    __tablename__ = 'student'
+
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     student_id = Column(String(50), nullable=False, unique=True)
-    program = Column(Enum(StudentProgramType), nullable=False)
-    study_year = Column(Enum(StudentStudyYearType), nullable=False)
+    program = Column(dbEnum(StudentProgramType), nullable=False)
+    study_year = Column(dbEnum(StudentStudyYearType), nullable=False)
 
 
 class Attachment(Base):
+    __tablename__ = 'attachment'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
     filename = Column(String(100), nullable=False)
@@ -210,6 +245,8 @@ class Attachment(Base):
 
 
 class Announcement(Base):
+    __tablename__ = 'announcement'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
     content = Column(Text, nullable=False)
@@ -219,6 +256,8 @@ class Announcement(Base):
 
 
 class Extempore(Base):
+    __tablename__ = 'extempore'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
     content = Column(Text, nullable=False)
@@ -228,11 +267,13 @@ class Extempore(Base):
 
 
 class Motion(Base):
+    __tablename__ = 'motion'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
     description = Column(Text, nullable=False)
     content = Column(Text)
-    status = Column(Enum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
+    status = Column(dbEnum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
     resolution = Column(Text)
     execution = Column(Text)
 
