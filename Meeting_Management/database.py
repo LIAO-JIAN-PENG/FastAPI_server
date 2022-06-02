@@ -2,9 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from . import DATABASE_SETTING
 
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{DATABASE_SETTING}@localhost:3306/meeting_management"
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://root@localhost:3306/meeting_management"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
