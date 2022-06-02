@@ -106,7 +106,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.idea
+Meeting_Management/.idea/
 .env
 .venv
 env/
@@ -140,4 +140,4 @@ dmypy.json
 cython_debug/
 
 # Database user authorization
-..database.py
+Meeting_Management/database.py
