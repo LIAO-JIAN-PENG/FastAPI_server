@@ -7,12 +7,12 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship, backref
 
 
-class GenderType(Enum):
+class GenderType(str, Enum):
     Male = '男'
     Female = '女'
 
 
-class PersonType(Enum):
+class PersonType(str, Enum):
     Expert = '業界專家'
     Assistant = '系助理'
     DeptProf = '系上教師'
@@ -20,7 +20,7 @@ class PersonType(Enum):
     Student = '學生'
 
 
-class MeetingType(Enum):
+class MeetingType(str, Enum):
     DeptAffairs = '系務會議'
     FacultyEvaluation = '系教評會'
     DeptCurriculum = '系課程委員會'
@@ -29,13 +29,13 @@ class MeetingType(Enum):
     Other = '其他'
 
 
-class StudentProgramType(Enum):
+class StudentProgramType(str, Enum):
     UnderGraduate = '大學部'
     Graduate = '碩士班'
     PhD = '博士班'
 
 
-class StudentStudyYearType(Enum):
+class StudentStudyYearType(str, Enum):
     FirstYear = '一年級'
     SecondYear = '二年級'
     ThirdYear = '三年級'
@@ -45,7 +45,7 @@ class StudentStudyYearType(Enum):
     SeventhYear = '七年級'
 
 
-class MotionStatusType(Enum):
+class MotionStatusType(str, Enum):
     InDiscussion = '討論中'
     InExecution = '執行中'
     Closed = '結案'
@@ -80,6 +80,16 @@ class Meeting(Base):
 
     def __repr__(self):
         return f'<Meeting {self.id} {self.title} {self.type.value}>'
+
+    def set(self, meeting):
+        """
+        :param meeting: {title, title, time, location, is_draft}
+        """
+        self.title = meeting.title
+        self.type = meeting.type
+        self.time = meeting.time
+        self.location = meeting.location
+        self.is_draft = meeting.is_draft
 
     def attendees_filter_by(self, **kwargs):
         return Person.query.filter_by(**kwargs).join(Attendee).join(Meeting).filter_by(id=self.id)
