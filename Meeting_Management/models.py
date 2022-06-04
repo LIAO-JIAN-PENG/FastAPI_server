@@ -176,7 +176,7 @@ class Attendee(Base):
 class Expert(Base):
     __tablename__ = 'expert'
 
-    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id', ondelete="CASCADE"), primary_key=True)
     company_name = Column(String(50), nullable=False)
     job_title = Column(String(50), nullable=False)
     office_tel = Column(String(20))
@@ -187,14 +187,14 @@ class Expert(Base):
 class Assistant(Base):
     __tablename__ = 'assistant'
 
-    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id', ondelete="CASCADE"), primary_key=True)
     office_tel = Column(String(20))
 
 
 class DeptProf(Base):
     __tablename__ = 'deptProf'
 
-    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id', ondelete="CASCADE"), primary_key=True)
     job_title = Column(String(50), nullable=False)
     office_tel = Column(String(20))
 
@@ -202,7 +202,7 @@ class DeptProf(Base):
 class OtherProf(Base):
     __tablename__ = 'otherProf'
 
-    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id', ondelete="CASCADE"), primary_key=True)
     univ_name = Column(String(50), nullable=False)
     dept_name = Column(String(50), nullable=False)
     job_title = Column(String(50), nullable=False)
@@ -214,7 +214,7 @@ class OtherProf(Base):
 class Student(Base):
     __tablename__ = 'student'
 
-    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id', ondelete="CASCADE"), primary_key=True)
     student_id = Column(String(50), nullable=False, unique=True)
     program = Column(dbEnum(StudentProgramType), nullable=False)
     study_year = Column(dbEnum(StudentStudyYearType), nullable=False)

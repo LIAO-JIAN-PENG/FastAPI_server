@@ -79,7 +79,6 @@ def create_person(request: schemas.Person, db: Session = Depends(get_db)):
     return person
 
 
-# TODO: Delete Still have problem
 @router.delete('/{id}')
 def delete_person(id: int, db: Session = Depends(get_db)):
     person = db.query(models.Person).filter_by(id=id)
@@ -88,7 +87,7 @@ def delete_person(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Person with id {id} not found")
 
-    db.delete(person)
+    person.delete()
     db.commit()
     return 'deleted'
 

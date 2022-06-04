@@ -74,3 +74,6 @@ def create_people(count: int, db: Session = Depends(get_db)):
 
     return f"{count} people have created"
 
+
+# @router.get('/meeting/{count}', response_model=)
+
