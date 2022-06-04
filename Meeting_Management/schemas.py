@@ -4,24 +4,33 @@ from datetime import datetime
 from . import models
 
 
-class ExpertBase(BaseModel):
+class Expert(BaseModel):
     company_name: str = ""
     job_title: str = ""
     office_tel: str = ""
     address: str = ""
     bank_account: str = ""
 
+    class Config:
+        orm_mode = True
 
-class AssistantBase(BaseModel):
+
+class Assistant(BaseModel):
     office_tel: str = ""
 
+    class Config:
+        orm_mode = True
 
-class DeptprofBase(BaseModel):
+
+class Deptprof(BaseModel):
     job_title: str = ""
     office_tel: str = ""
 
+    class Config:
+        orm_mode = True
 
-class OtherprofBase(BaseModel):
+
+class Otherprof(BaseModel):
     univ_name: str = ""
     dept_name: str = ""
     job_title: str = ""
@@ -29,38 +38,14 @@ class OtherprofBase(BaseModel):
     address: str = ""
     bank_account: str = ""
 
+    class Config:
+        orm_mode = True
 
-class StudentBase(BaseModel):
+
+class Student(BaseModel):
     student_id: str = ""
     program: models.StudentProgramType
     study_year: models.StudentStudyYearType
-
-
-class Expert(ExpertBase):
-
-    class Config:
-        orm_mode = True
-
-
-class Assistant(AssistantBase):
-
-    class Config:
-        orm_mode = True
-
-
-class Deptprof(DeptprofBase):
-
-    class Config:
-        orm_mode = True
-
-
-class Otherprof(OtherprofBase):
-
-    class Config:
-        orm_mode = True
-
-
-class Student(StudentBase):
 
     class Config:
         orm_mode = True
