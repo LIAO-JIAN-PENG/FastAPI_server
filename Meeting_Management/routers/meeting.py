@@ -16,13 +16,13 @@ router = APIRouter(
 get_db = database.get_db
 
 
-@router.get('/', response_model=List[schemas.Meeting])
+@router.get('/', response_model=List[schemas.MeetingShow])
 def get_all(db: Session = Depends(get_db)):
     meetings = db.query(models.Meeting).all()
     return meetings
 
 
-@router.get('/{id}', response_model=schemas.Meeting)
+@router.get('/{id}', response_model=schemas.MeetingShow)
 def get_meeting(id: int, db: Session = Depends(get_db)):
     meeting = db.query(models.Meeting).get(id)
     if not meeting:
@@ -31,7 +31,7 @@ def get_meeting(id: int, db: Session = Depends(get_db)):
     return meeting
 
 
-@router.post('/')
+@router.post('/', response_model=schemas.MeetingShow)
 def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db)):
     meeting = models.Meeting()
     meeting.title = request.title
@@ -76,16 +76,11 @@ def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Sessio
         extempore = models.Extempore(content=item.content)
         meeting.extempores.append(extempore)
 
-    for file in files:
-        attachment = models.Attachment(filename=file.filename,
-                                       file_path=os.path.join(UPLOAD_FOLDER, str(meeting.id) + '-' + file.filename))
-        meeting.attachments.append(attachment)
-
     db.add(meeting)
     db.commit()
     db.refresh(meeting)
 
-    asyncio.run(file_route.upload_files(meeting.id, files))
+    asyncio.run(file_route.upload_files(meeting.id, files, db))
 
     return meeting
 

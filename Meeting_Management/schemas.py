@@ -133,17 +133,14 @@ class Motion(BaseModel):
 
 
 class MeetingBase(BaseModel):
-    title: str = Form()
-    type: models.MeetingType = Form()
-    time: datetime = Form()
-    location: str = Form()
-    chair_id: int = Form()
-    chair_speech: str = Form()
-    chair_confirmed: bool = Form()
-    minute_taker_id: int = Form()
-
-    class Config:
-        orm_mode = True
+    title: str
+    type: models.MeetingType
+    time: datetime
+    location: str
+    chair_id: int
+    chair_speech: str
+    chair_confirmed: bool
+    minute_taker_id: int
 
 
 class Meeting(MeetingBase):
@@ -151,7 +148,6 @@ class Meeting(MeetingBase):
     announcements: List[Announcement] = None
     extempores: List[Extempore] = None
     motions: List[Motion] = None
-    attachment: List[Attachment] = None
 
     @classmethod
     def __get_validators__(cls):
@@ -162,3 +158,17 @@ class Meeting(MeetingBase):
         if isinstance(value, str):
             return cls(**json.loads(value))
         return value
+
+    class Config:
+        orm_mode = True
+
+
+# TODO: attendee 有問題要解決
+class MeetingShow(MeetingBase):
+    announcements: List[Announcement] = None
+    extempores: List[Extempore] = None
+    motions: List[Motion] = None
+    attachments: List[Attachment] = None
+
+    class Config:
+        orm_mode = True
