@@ -1,7 +1,14 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 from datetime import datetime
+from fastapi import Form
 from . import models
+import json
+
+
+"""
+Person
+"""
 
 
 class Expert(BaseModel):
@@ -77,16 +84,81 @@ class PersonShow(Person):
             return BaseModel.dict(self, *args, **kwargs)
 
 
-class Meeting(BaseModel):
-    title: str
-    type: models.MeetingType
-    time: datetime
-    location: str
-    chair_id: int
-    chair_speech: str
-    chair_confirmed: bool
-    minute_taker_id: int
+"""
+Meeting
+"""
+
+
+class Attendee(BaseModel):
+    person_id: int
+    is_present: bool = True
+    is_confirmed: bool = False
+    is_member: bool = True
 
     class Config:
         orm_mode = True
 
+
+class Attachment(BaseModel):
+    filename: str
+    file_path: str
+
+    class Config:
+        orm_mode = True
+
+
+class Announcement(BaseModel):
+    content: str
+
+    class Config:
+        orm_mode = True
+
+
+class Extempore(BaseModel):
+    content: str
+
+    class Config:
+        orm_mode = True
+
+
+class Motion(BaseModel):
+    description: str
+    content: str
+    status: models.MotionStatusType
+    resolution: str
+    execution: str
+
+    class Config:
+        orm_mode = True
+
+
+class MeetingBase(BaseModel):
+    title: str = Form()
+    type: models.MeetingType = Form()
+    time: datetime = Form()
+    location: str = Form()
+    chair_id: int = Form()
+    chair_speech: str = Form()
+    chair_confirmed: bool = Form()
+    minute_taker_id: int = Form()
+
+    class Config:
+        orm_mode = True
+
+
+class Meeting(MeetingBase):
+    attendees: List[Attendee] = None
+    announcements: List[Announcement] = None
+    extempores: List[Extempore] = None
+    motions: List[Motion] = None
+    attachment: List[Attachment] = None
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value

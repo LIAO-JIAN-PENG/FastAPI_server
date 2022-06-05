@@ -81,16 +81,6 @@ class Meeting(Base):
     def __repr__(self):
         return f'<Meeting {self.id} {self.title} {self.type.value}>'
 
-    def set(self, meeting):
-        """
-        :param meeting: {title, title, time, location, is_draft}
-        """
-        self.title = meeting.title
-        self.type = meeting.type
-        self.time = meeting.time
-        self.location = meeting.location
-        self.is_draft = meeting.is_draft
-
     def attendees_filter_by(self, **kwargs):
         return Person.query.filter_by(**kwargs).join(Attendee).join(Meeting).filter_by(id=self.id)
 
@@ -228,9 +218,9 @@ class Attachment(Base):
     filename = Column(String(100), nullable=False)
     file_path = Column(String(500), nullable=False)
 
-    def __init__(self, filename, filepath):
+    def __init__(self, filename, file_path):
         self.filename = filename
-        self.file_path = filepath
+        self.file_path = file_path
 
     def __repr__(self):
         return f'<Person {self.id} {self.meeting_id} {self.filename}>'

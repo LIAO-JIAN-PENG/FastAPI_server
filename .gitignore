@@ -141,3 +141,5 @@ cython_debug/
 
 # Database user authorization
 Meeting_Management/database.py
+
+Meeting_Management/static/uploads
