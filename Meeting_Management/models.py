@@ -223,7 +223,7 @@ class Attachment(Base):
         self.file_path = file_path
 
     def __repr__(self):
-        return f'<Person {self.id} {self.meeting_id} {self.filename}>'
+        return f'<File {self.id} {self.meeting_id} {self.filename}>'
 
 
 class Announcement(Base):
