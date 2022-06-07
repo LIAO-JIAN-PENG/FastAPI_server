@@ -2,7 +2,7 @@ import asyncio
 import os
 from typing import List
 import aiofiles
-from fastapi import APIRouter, UploadFile, Depends
+from fastapi import APIRouter, UploadFile, Depends, responses
 from ..main import UPLOAD_FOLDER
 from .. import database, models
 from sqlalchemy.orm import Session
@@ -14,16 +14,18 @@ router = APIRouter(
 
 get_db = database.get_db
 
-# @router.get("/download/{meeting_id}")
-# async def download_files(meeting_id: int, files: List[UploadFile]):
-#     for file in files:
-#         out_file_path = os.path.join(UPLOAD_FOLDER, str(meeting_id) + '-' + file.filename)
-#
-#         async with aiofiles.open(out_file_path, 'wb') as out_file:
-#             content = await file.read()  # async read
-#             await out_file.write(content)
-#
-#     return {"filenames": [file.filename for file in files]}
+
+@router.get("/download/{id}")
+def download_files(id: int, db: Session = Depends(get_db)):
+    attachment = db.query(models.Attachment).filter_by(id=id).first()
+
+    if not attachment:
+        return {'message': f'file with id {id} not found'}
+
+    if not os.path.exists(attachment.file_path):
+        return {'message': f'file_path with id {id} not exist'}
+
+    return responses.FileResponse(path=attachment.file_path, filename=attachment.filename)
 
 
 async def upload_file(meeting_id: int, file: UploadFile):
