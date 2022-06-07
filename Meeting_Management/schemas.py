@@ -163,8 +163,8 @@ class Meeting(MeetingBase):
         orm_mode = True
 
 
-# TODO: attendee 有問題要解決
 class MeetingShow(MeetingBase):
+    attendee_association: List[Attendee] = None
     announcements: List[Announcement] = None
     extempores: List[Extempore] = None
     motions: List[Motion] = None

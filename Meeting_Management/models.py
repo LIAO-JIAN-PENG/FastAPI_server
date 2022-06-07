@@ -151,7 +151,7 @@ class Person(Base):
 class Attendee(Base):
     __tablename__ = 'attendee'
 
-    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete="CASCADE"), primary_key=True)
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
     meeting = relationship(Meeting, backref=backref('attendee_association', cascade='all, delete-orphan'))
     attendee = relationship(Person, backref=backref('attendee_association', cascade='all, delete-orphan'))
@@ -214,7 +214,7 @@ class Attachment(Base):
     __tablename__ = 'attachment'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete="CASCADE"), primary_key=True)
     filename = Column(String(100), nullable=False)
     file_path = Column(String(500), nullable=False)
 
@@ -230,7 +230,7 @@ class Announcement(Base):
     __tablename__ = 'announcement'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete="CASCADE"), primary_key=True)
     content = Column(Text, nullable=False)
 
     def __init__(self, content):
@@ -241,7 +241,7 @@ class Extempore(Base):
     __tablename__ = 'extempore'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete="CASCADE"), primary_key=True)
     content = Column(Text, nullable=False)
 
     def __init__(self, content):
@@ -252,7 +252,7 @@ class Motion(Base):
     __tablename__ = 'motion'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete="CASCADE"), primary_key=True)
     description = Column(Text, nullable=False)
     content = Column(Text)
     status = Column(dbEnum(MotionStatusType), nullable=False, default=MotionStatusType.InDiscussion)
