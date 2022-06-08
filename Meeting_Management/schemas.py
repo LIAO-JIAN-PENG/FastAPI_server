@@ -137,10 +137,10 @@ class MeetingBase(BaseModel):
     type: models.MeetingType
     time: datetime
     location: str
-    chair_id: int
+    chair_id: Optional[int]
     chair_speech: str
     chair_confirmed: bool
-    minute_taker_id: int
+    minute_taker_id: Optional[int]
 
 
 class Meeting(MeetingBase):

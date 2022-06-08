@@ -66,12 +66,12 @@ class Meeting(Base):
     extempores = relationship('Extempore', backref='meeting', cascade='all, delete-orphan')
     motions = relationship('Motion', backref='meeting', cascade='all, delete-orphan')
 
-    chair_id = Column(Integer, ForeignKey('person.id'))
+    chair_id = Column(Integer, ForeignKey('person.id', ondelete='SET NULL'))
     chair_speech = Column(Text)
     chair_confirmed = Column(Boolean, nullable=False, default=False)
     chair = relationship('Person', foreign_keys=[chair_id], uselist=False, backref='meetings_as_chair')
 
-    minute_taker_id = Column(Integer, ForeignKey('person.id'))
+    minute_taker_id = Column(Integer, ForeignKey('person.id', ondelete='SET NULL'))
     minute_taker = relationship('Person', foreign_keys=[minute_taker_id], uselist=False,
                                 backref='meetings_as_minute_taker')
 
@@ -151,8 +151,8 @@ class Person(Base):
 class Attendee(Base):
     __tablename__ = 'attendee'
 
-    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete="CASCADE"), primary_key=True)
-    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id', ondelete='CASCADE'), primary_key=True)
     meeting = relationship(Meeting, backref=backref('attendee_association', cascade='all, delete-orphan'))
     attendee = relationship(Person, backref=backref('attendee_association', cascade='all, delete-orphan'))
     is_present = Column(Boolean, nullable=False, default=False)
