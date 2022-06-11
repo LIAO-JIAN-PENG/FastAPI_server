@@ -151,7 +151,7 @@ class Person(Base):
 class Attendee(Base):
     __tablename__ = 'attendee'
 
-    meeting_id = Column(Integer, ForeignKey('meeting.id'), primary_key=True)
+    meeting_id = Column(Integer, ForeignKey('meeting.id', ondelete='CASCADE'), primary_key=True)
     person_id = Column(Integer, ForeignKey('person.id', ondelete='CASCADE'), primary_key=True)
     meeting = relationship(Meeting, backref=backref('attendee_association', cascade='all, delete-orphan'))
     attendee = relationship(Person, backref=backref('attendee_association', cascade='all, delete-orphan'))

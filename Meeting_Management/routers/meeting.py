@@ -123,7 +123,7 @@ def delete_meeting(id: int, db: Session = Depends(get_db), token: str = Depends(
                             detail=f"Meeting with id {id} not found")
 
     for attachment in meeting.first().attachments:
-        file_route.delete_file(attachment.id, db)
+        file_route.delete_file(attachment.id, db, token)
 
     meeting.delete(synchronize_session=False)
 
@@ -194,7 +194,7 @@ def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], d
         extempore = models.Extempore(content=item.content)
         meeting.extempores.append(extempore)
 
-    asyncio.run(file_route.upload_files(id, files, db))
+    asyncio.run(file_route.upload_files(id, files, db, token))
     db.commit()
     db.refresh(meeting)
 
