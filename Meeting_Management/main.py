@@ -13,8 +13,9 @@ Path(UPLOAD_FOLDER).mkdir(parents=True, exist_ok=True)
 models.Base.metadata.create_all(bind=engine)
 
 
-from .routers import meeting, person, factory, file, motion
+from .routers import meeting, person, factory, file, motion, authentication
 
+app.include_router(authentication.router)
 app.include_router(meeting.router)
 app.include_router(person.router)
 app.include_router(factory.router)

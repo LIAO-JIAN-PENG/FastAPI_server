@@ -2,10 +2,11 @@ import asyncio
 import os
 from typing import List
 import aiofiles
-from fastapi import APIRouter, UploadFile, Depends, responses
+from fastapi import APIRouter, UploadFile, Depends, responses, HTTPException, status
 from ..main import UPLOAD_FOLDER
-from .. import database, models
+from .. import database, models, oauth2, schemas
 from sqlalchemy.orm import Session
+from ..myOuth2 import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/file',
@@ -13,10 +14,19 @@ router = APIRouter(
 )
 
 get_db = database.get_db
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get("/download/{id}")
-def download_files(id: int, db: Session = Depends(get_db)):
+def download_files(id: int, db: Session = Depends(get_db),
+                   current_user: schemas.Person = Depends(oauth2.get_current_user),
+                   token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to download files")
+
     attachment = db.query(models.Attachment).filter_by(id=id).first()
 
     if not attachment:
@@ -40,7 +50,15 @@ async def upload_file(meeting_id: int, file: UploadFile):
 
 
 @router.post("/upload/{meeting_id}")
-async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = Depends(get_db)):
+async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = Depends(get_db),
+                       current_user: schemas.Person = Depends(oauth2.get_current_user),
+                       token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to upload files")
+
     # async upload or update file
     file_tasks = [upload_file(meeting_id, file) for file in files]
     file_info = await asyncio.gather(*file_tasks, return_exceptions=True)
@@ -64,7 +82,14 @@ async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = D
 
 
 @router.delete("/delete/{id}")
-def delete_file(id: int, db: Session = Depends(get_db)):
+def delete_file(id: int, db: Session = Depends(get_db),
+                current_user: schemas.Person = Depends(oauth2.get_current_user), token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to delete files")
+
     attachment = db.query(models.Attachment).filter_by(id=id)
 
     if not attachment.first():

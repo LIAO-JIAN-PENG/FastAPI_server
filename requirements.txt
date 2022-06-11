@@ -6,3 +6,4 @@ pymysql
 Faker
 python-multipart
 aiofiles
+python-jose

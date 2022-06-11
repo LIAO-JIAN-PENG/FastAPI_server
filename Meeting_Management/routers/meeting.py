@@ -1,11 +1,12 @@
 import asyncio
 from typing import List
-
 from fastapi import APIRouter, Depends, status, HTTPException, UploadFile
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-
 from . import file as file_route
-from .. import database, models, schemas
+from . import authentication
+from .. import database, models, schemas, oauth2, JWTtoken
+from ..myOuth2 import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/meeting',
@@ -13,16 +14,34 @@ router = APIRouter(
 )
 
 get_db = database.get_db
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get('/', response_model=List[schemas.MeetingShow])
-def get_all(db: Session = Depends(get_db)):
+def get_all(db: Session = Depends(get_db), current_user: schemas.Person = Depends(oauth2.get_current_user),
+            token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to get all meetings")
+
     meetings = db.query(models.Meeting).all()
     return meetings
 
 
 @router.get('/{id}', response_model=schemas.MeetingShow)
-def get_meeting(id: int, db: Session = Depends(get_db)):
+def get_meeting(id: int, db: Session = Depends(get_db),
+                current_user: schemas.Person = Depends(oauth2.get_current_user),
+                token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to get meetings")
+
+    current_user_email = oauth2.get_current_user
+    print(current_user_email)
     meeting = db.query(models.Meeting).get(id)
     if not meeting:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Meeting with the id {id} is not available")
@@ -32,7 +51,15 @@ def get_meeting(id: int, db: Session = Depends(get_db)):
 
 
 @router.post('/', response_model=schemas.MeetingShow)
-def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db)):
+def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db),
+                   current_user: schemas.Person = Depends(oauth2.get_current_user),
+                   token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to create meetings")
+
     meeting = models.Meeting()
     meeting.title = request.title
     meeting.type = request.type
@@ -86,7 +113,15 @@ def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Sessio
 
 
 @router.delete('/{id}')
-def delete_meeting(id: int, db: Session = Depends(get_db)):
+def delete_meeting(id: int, db: Session = Depends(get_db),
+                   current_user: schemas.Person = Depends(oauth2.get_current_user),
+                   token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to delete meetings")
+
     meeting = db.query(models.Meeting).filter_by(id=id)
 
     if not meeting.first():
@@ -103,7 +138,15 @@ def delete_meeting(id: int, db: Session = Depends(get_db)):
 
 
 @router.put('/{id}', response_model=schemas.MeetingShow)
-def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db)):
+def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db),
+                   current_user: schemas.Person = Depends(oauth2.get_current_user),
+                   token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+    if user.type != '系助理' and user.email != 'admin@admin':
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You have no authorization to update meetings")
+
     meeting = db.query(models.Meeting).get(id)
 
     if not meeting:

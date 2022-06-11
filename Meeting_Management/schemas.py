@@ -172,3 +172,16 @@ class MeetingShow(MeetingBase):
 
     class Config:
         orm_mode = True
+
+
+class Login(BaseModel):
+    username: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None

@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from . import person as person_route
 from . import meeting as meeting_route
-from .. import database, schemas, models
+from .. import database, schemas, models, oauth2
 from sqlalchemy.orm import Session
 from datetime import datetime
 from datetime import timedelta
@@ -20,7 +20,8 @@ faker = Faker('zh_TW')
 
 
 @router.get('/person/{count}', response_model=List[schemas.PersonShow])
-def gen_people(count: int, db: Session = Depends(get_db)):
+def gen_people(count: int, db: Session = Depends(get_db),
+               current_user: schemas.Person = Depends(oauth2.get_current_user)):
 
     people = []
     while count:
@@ -69,7 +70,8 @@ def gen_people(count: int, db: Session = Depends(get_db)):
 
 
 @router.post('/person/{count}')
-def create_people(count: int, db: Session = Depends(get_db)):
+def create_people(count: int, db: Session = Depends(get_db),
+                  current_user: schemas.Person = Depends(oauth2.get_current_user)):
 
     for person in gen_people(count, db):
         person_route.create_person(person, db)
@@ -78,7 +80,8 @@ def create_people(count: int, db: Session = Depends(get_db)):
 
 
 @router.get('/meeting/{count}', response_model=List[schemas.Meeting])
-def gen_meetings(count: int, db: Session = Depends(get_db)):
+def gen_meetings(count: int, db: Session = Depends(get_db),
+                 current_user: schemas.Person = Depends(oauth2.get_current_user)):
 
     meetings = []
     while count:
@@ -121,7 +124,8 @@ def gen_meetings(count: int, db: Session = Depends(get_db)):
 
 
 @router.post('/meeting/{count}')
-def create_meetings(count: int, db: Session = Depends(get_db)):
+def create_meetings(count: int, db: Session = Depends(get_db),
+                    current_user: schemas.Person = Depends(oauth2.get_current_user)):
     for meetings in gen_meetings(count, db):
         meeting_route.create_meeting(meetings, [], db)
 
