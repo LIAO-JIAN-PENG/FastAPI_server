@@ -8,6 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 from faker import Faker
 import random
+from ..myOuth2 import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/factory',
@@ -15,6 +16,7 @@ router = APIRouter(
 )
 
 get_db = database.get_db
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 faker = Faker('zh_TW')
 
@@ -69,10 +71,10 @@ def gen_people(count: int, db: Session = Depends(get_db)):
 
 
 @router.post('/person/{count}')
-def create_people(count: int, db: Session = Depends(get_db)):
+def create_people(count: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
 
     for person in gen_people(count, db):
-        person_route.create_person(person, db)# 缺一個 token
+        person_route.create_person(person, db, token)
 
     return f"{count} people have created"
 
@@ -121,9 +123,9 @@ def gen_meetings(count: int, db: Session = Depends(get_db)):
 
 
 @router.post('/meeting/{count}')
-def create_meetings(count: int, db: Session = Depends(get_db)):
+def create_meetings(count: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     for meetings in gen_meetings(count, db):
-        meeting_route.create_meeting(meetings, [], db)
+        meeting_route.create_meeting(meetings, [], db, token)
 
     return f"{count} meetings have created"
 

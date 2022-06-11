@@ -103,7 +103,7 @@ def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Sessio
     db.commit()
     db.refresh(meeting)
 
-    asyncio.run(file_route.upload_files(meeting.id, files, db))
+    asyncio.run(file_route.upload_files(meeting.id, files, db, token))
 
     return meeting
 
