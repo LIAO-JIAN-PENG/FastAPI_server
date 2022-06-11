@@ -18,8 +18,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get('/', response_model=List[schemas.MeetingShow])
-def get_all(db: Session = Depends(get_db), current_user: schemas.Person = Depends(oauth2.get_current_user),
-            token: str = Depends(oauth2_scheme)):
+def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -31,9 +30,7 @@ def get_all(db: Session = Depends(get_db), current_user: schemas.Person = Depend
 
 
 @router.get('/{id}', response_model=schemas.MeetingShow)
-def get_meeting(id: int, db: Session = Depends(get_db),
-                current_user: schemas.Person = Depends(oauth2.get_current_user),
-                token: str = Depends(oauth2_scheme)):
+def get_meeting(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -52,7 +49,6 @@ def get_meeting(id: int, db: Session = Depends(get_db),
 
 @router.post('/', response_model=schemas.MeetingShow)
 def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db),
-                   current_user: schemas.Person = Depends(oauth2.get_current_user),
                    token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
@@ -113,9 +109,7 @@ def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Sessio
 
 
 @router.delete('/{id}')
-def delete_meeting(id: int, db: Session = Depends(get_db),
-                   current_user: schemas.Person = Depends(oauth2.get_current_user),
-                   token: str = Depends(oauth2_scheme)):
+def delete_meeting(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -139,7 +133,6 @@ def delete_meeting(id: int, db: Session = Depends(get_db),
 
 @router.put('/{id}', response_model=schemas.MeetingShow)
 def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], db: Session = Depends(get_db),
-                   current_user: schemas.Person = Depends(oauth2.get_current_user),
                    token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()

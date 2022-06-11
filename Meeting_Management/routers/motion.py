@@ -14,8 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get('/', response_model=List[schemas.Motion])
-def get_all(db: Session = Depends(get_db), current_user: schemas.Person = Depends(oauth2.get_current_user),
-            token: str = Depends(oauth2_scheme)):
+def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':

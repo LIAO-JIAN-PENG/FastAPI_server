@@ -18,9 +18,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get("/download/{id}")
-def download_files(id: int, db: Session = Depends(get_db),
-                   current_user: schemas.Person = Depends(oauth2.get_current_user),
-                   token: str = Depends(oauth2_scheme)):
+def download_files(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -51,7 +49,6 @@ async def upload_file(meeting_id: int, file: UploadFile):
 
 @router.post("/upload/{meeting_id}")
 async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = Depends(get_db),
-                       current_user: schemas.Person = Depends(oauth2.get_current_user),
                        token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
@@ -82,8 +79,7 @@ async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = D
 
 
 @router.delete("/delete/{id}")
-def delete_file(id: int, db: Session = Depends(get_db),
-                current_user: schemas.Person = Depends(oauth2.get_current_user), token: str = Depends(oauth2_scheme)):
+def delete_file(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':

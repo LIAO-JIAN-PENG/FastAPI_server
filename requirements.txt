@@ -7,3 +7,5 @@ Faker
 python-multipart
 aiofiles
 python-jose
+
+starlette

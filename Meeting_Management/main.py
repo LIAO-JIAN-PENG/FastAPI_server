@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# TODO: change here origin
 origins = [
     "http://localhost.meetingapi.com",
     "https://localhost.meetingapi.com",

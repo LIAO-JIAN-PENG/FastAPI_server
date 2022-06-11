@@ -20,8 +20,7 @@ faker = Faker('zh_TW')
 
 
 @router.get('/person/{count}', response_model=List[schemas.PersonShow])
-def gen_people(count: int, db: Session = Depends(get_db),
-               current_user: schemas.Person = Depends(oauth2.get_current_user)):
+def gen_people(count: int, db: Session = Depends(get_db)):
 
     people = []
     while count:
@@ -70,18 +69,16 @@ def gen_people(count: int, db: Session = Depends(get_db),
 
 
 @router.post('/person/{count}')
-def create_people(count: int, db: Session = Depends(get_db),
-                  current_user: schemas.Person = Depends(oauth2.get_current_user)):
+def create_people(count: int, db: Session = Depends(get_db)):
 
     for person in gen_people(count, db):
-        person_route.create_person(person, db)
+        person_route.create_person(person, db)# 缺一個 token
 
     return f"{count} people have created"
 
 
 @router.get('/meeting/{count}', response_model=List[schemas.Meeting])
-def gen_meetings(count: int, db: Session = Depends(get_db),
-                 current_user: schemas.Person = Depends(oauth2.get_current_user)):
+def gen_meetings(count: int, db: Session = Depends(get_db)):
 
     meetings = []
     while count:
@@ -124,8 +121,7 @@ def gen_meetings(count: int, db: Session = Depends(get_db),
 
 
 @router.post('/meeting/{count}')
-def create_meetings(count: int, db: Session = Depends(get_db),
-                    current_user: schemas.Person = Depends(oauth2.get_current_user)):
+def create_meetings(count: int, db: Session = Depends(get_db)):
     for meetings in gen_meetings(count, db):
         meeting_route.create_meeting(meetings, [], db)
 

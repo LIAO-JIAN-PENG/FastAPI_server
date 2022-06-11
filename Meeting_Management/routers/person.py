@@ -15,8 +15,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get('/', response_model=List[schemas.PersonShow])
-def get_all(db: Session = Depends(get_db),  current_user: schemas.Person = Depends(oauth2.get_current_user),
-            token: str = Depends(oauth2_scheme)):
+def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -28,8 +27,7 @@ def get_all(db: Session = Depends(get_db),  current_user: schemas.Person = Depen
 
 
 @router.get('/{id}', response_model=schemas.PersonShow)
-def get_person(id: int, db: Session = Depends(get_db),
-               current_user: schemas.Person = Depends(oauth2.get_current_user), token: str = Depends(oauth2_scheme)):
+def get_person(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -41,8 +39,7 @@ def get_person(id: int, db: Session = Depends(get_db),
 
 
 @router.post('/')
-def create_person(request: schemas.Person, db: Session = Depends(get_db),
-                  current_user: schemas.Person = Depends(oauth2.get_current_user), token: str = Depends(oauth2_scheme)):
+def create_person(request: schemas.Person, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -54,8 +51,7 @@ def create_person(request: schemas.Person, db: Session = Depends(get_db),
 
 
 @router.delete('/{id}')
-def delete_person(id: int, db: Session = Depends(get_db),
-                  current_user: schemas.Person = Depends(oauth2.get_current_user), token: str = Depends(oauth2_scheme)):
+def delete_person(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
@@ -67,8 +63,7 @@ def delete_person(id: int, db: Session = Depends(get_db),
 
 
 @router.put('/{id}')
-def update_person(id: int, request: schemas.Person, db: Session = Depends(get_db),
-                  current_user: schemas.Person = Depends(oauth2.get_current_user), token: str = Depends(oauth2_scheme)):
+def update_person(id: int, request: schemas.Person, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
     if user.type != '系助理' and user.email != 'admin@admin':
