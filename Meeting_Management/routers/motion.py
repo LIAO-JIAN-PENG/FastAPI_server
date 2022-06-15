@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import desc, or_
 from .. import database, models, schemas, oauth2
 from ..myOuth2 import OAuth2PasswordBearer
 
@@ -21,5 +22,11 @@ def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to get all motions")
 
-    motions = db.query(models.Motion).all()
+    attend = db.query(models.Attendee).filter_by(person_id=user.id)
+    meetings_main = db.query(models.Meeting).filter(or_(models.Meeting.chair_id.like(user.id),
+                                                        models.Meeting.minute_taker_id.like(user.id)))
+    meetings = db.query(models.Meeting).join(attend.subquery()).union(meetings_main).order_by(desc(models.Meeting.time))
+
+    motions = db.query(models.Motion).join(meetings.subquery()).order_by(models.Motion.status).all()
+
     return motions

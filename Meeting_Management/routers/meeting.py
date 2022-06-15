@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, status, HTTPException, UploadFile
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from sqlalchemy import desc, or_
 from . import file as file_route
 from . import authentication
 from .. import database, models, schemas, oauth2, JWTtoken
@@ -18,6 +19,19 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @router.get('/', response_model=List[schemas.MeetingShow])
+def get_current(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    current_user_email = oauth2.get_current_user(token=token)
+    user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
+
+    attend = db.query(models.Attendee).filter_by(person_id=user.id)
+    meetings_main = db.query(models.Meeting).filter(or_(models.Meeting.chair_id.like(user.id),
+                                                        models.Meeting.minute_taker_id.like(user.id)))
+    meetings = db.query(models.Meeting).join(attend.subquery()).union(meetings_main).order_by(desc(models.Meeting.time))
+
+    return meetings.all()
+
+
+@router.get('/all', response_model=List[schemas.MeetingShow])
 def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
