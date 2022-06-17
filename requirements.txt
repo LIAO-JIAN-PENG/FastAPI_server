@@ -7,5 +7,5 @@ Faker
 python-multipart
 aiofiles
 python-jose
-
 starlette
+fastapi-mail
