@@ -164,6 +164,7 @@ class Meeting(MeetingBase):
 
 
 class MeetingShow(MeetingBase):
+    id: int
     attendee_association: List[Attendee] = None
     announcements: List[Announcement] = None
     extempores: List[Extempore] = None

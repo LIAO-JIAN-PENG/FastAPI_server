@@ -28,6 +28,7 @@ def get_current(db: Session = Depends(get_db), token: str = Depends(oauth2_schem
                                                         models.Meeting.minute_taker_id.like(user.id)))
     meetings = db.query(models.Meeting).join(attend.subquery()).union(meetings_main).order_by(desc(models.Meeting.time))
 
+    print(meetings.all())
     return meetings.all()
 
 
