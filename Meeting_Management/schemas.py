@@ -78,6 +78,7 @@ class Person(PersonBase):
 
 
 class PersonShow(Person):
+    id: int
     def dict(self, *args, **kwargs):
         if kwargs and kwargs.get("exclude_none") is not None:
             kwargs["exclude_none"] = True
