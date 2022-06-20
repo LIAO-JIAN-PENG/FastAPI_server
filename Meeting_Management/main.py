@@ -20,7 +20,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*", "new-meeting:1", "login:1"],
 )
 
 UPLOAD_FOLDER = path.join(app.root_path, 'static', 'uploads')
