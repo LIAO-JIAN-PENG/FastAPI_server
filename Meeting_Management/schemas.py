@@ -51,8 +51,8 @@ class Otherprof(BaseModel):
 
 class Student(BaseModel):
     student_id: str = ""
-    program: models.StudentProgramType
-    study_year: models.StudentStudyYearType
+    program: str = ""
+    study_year: str = ""
 
     class Config:
         orm_mode = True
