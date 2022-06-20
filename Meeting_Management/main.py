@@ -11,7 +11,7 @@ origins = [
     "http://localhost.meetingapi.com",
     "https://localhost.meetingapi.com",
     "http://localhost",
-    "http://localhost:8080",
+    "http://localhost:8081",
     "http://10.24.52.22/:1"
 ]
 
