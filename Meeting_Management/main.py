@@ -11,7 +11,7 @@ origins = [
     "http://localhost.meetingapi.com",
     "https://localhost.meetingapi.com",
     "http://localhost",
-    "http://localhost:8080",
+    "http://localhost:8081",
     "http://10.24.52.22/:1"
 ]
 
@@ -20,7 +20,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*", "new-meeting:1", "login:1"],
 )
 
 UPLOAD_FOLDER = path.join(app.root_path, 'static', 'uploads')
