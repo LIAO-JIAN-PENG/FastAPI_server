@@ -142,6 +142,7 @@ class MeetingBase(BaseModel):
     chair_speech: str
     chair_confirmed: bool
     minute_taker_id: Optional[int]
+    is_draft: bool
 
 
 class Meeting(MeetingBase):

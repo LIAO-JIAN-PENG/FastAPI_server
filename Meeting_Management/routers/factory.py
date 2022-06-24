@@ -93,7 +93,7 @@ def gen_meetings(count: int, db: Session = Depends(get_db)):
                                                                      minutes=random.randint(0, 59)),
                                   location=faker.address(), chair_id=person.pop().id,
                                   chair_speech=faker.text(), chair_confirmed=faker.boolean(chance_of_getting_true=50),
-                                  minute_taker_id=person.pop().id
+                                  minute_taker_id=person.pop().id, is_draft=faker.boolean(chance_of_getting_true=50)
                                   )
 
         meeting.attendees = []

@@ -76,6 +76,7 @@ def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Sessio
     meeting.type = request.type
     meeting.time = request.time
     meeting.location = request.location
+    meeting.is_draft = request.is_draft
 
     attendees_id = [att.person_id for att in request.attendees]
     attendees_id.append(request.chair_id)
@@ -165,6 +166,7 @@ def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], d
     meeting.type = request.type
     meeting.time = request.time
     meeting.location = request.location
+    meeting.is_draft = request.is_draft
 
     attendees_id = [att.person_id for att in request.attendees]
     attendees_id.append(request.chair_id)
