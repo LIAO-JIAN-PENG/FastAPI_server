@@ -21,7 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def download_files(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to download files")
 
@@ -52,7 +52,7 @@ async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = D
                        token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to upload files")
 
@@ -82,7 +82,7 @@ async def upload_files(meeting_id: int, files: List[UploadFile], db: Session = D
 def delete_file(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to delete files")
 

@@ -18,7 +18,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    # if user.type != '系助理' and user.email != 'admin@admin':
+    # if user.type != '系助理':
     #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
     #                         detail=f"You have no authorization to get all person")
 
@@ -30,7 +30,7 @@ def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
 def get_person(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    # if user.type != '系助理' and user.email != 'admin@admin':
+    # if user.type != '系助理':
     #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
     #                         detail=f"You have no authorization to get person")
 
@@ -42,7 +42,7 @@ def get_person(id: int, db: Session = Depends(get_db), token: str = Depends(oaut
 def create_person(request: schemas.Person, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to create person")
 
@@ -54,7 +54,7 @@ def create_person(request: schemas.Person, db: Session = Depends(get_db), token:
 def delete_person(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to delete person")
 
@@ -66,7 +66,7 @@ def delete_person(id: int, db: Session = Depends(get_db), token: str = Depends(o
 def update_person(id: int, request: schemas.Person, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to update person")
 

@@ -16,7 +16,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 async def send_email_asynchronous(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to get meetings")
 
@@ -39,7 +39,7 @@ def send_email_backgroundtasks(background_tasks: BackgroundTasks, id: int, db: S
                                token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to get meetings")
 

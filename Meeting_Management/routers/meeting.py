@@ -36,7 +36,7 @@ def get_current(db: Session = Depends(get_db), token: str = Depends(oauth2_schem
 def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    # if user.type != '系助理' and user.email != 'admin@admin':
+    # if user.type != '系助理':
     #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
     #                         detail=f"You have no authorization to get all meetings")
 
@@ -48,7 +48,7 @@ def get_all(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
 def get_meeting(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    # if user.type != '系助理' and user.email != 'admin@admin':
+    # if user.type != '系助理':
     #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
     #                         detail=f"You have no authorization to get meetings")
 
@@ -128,7 +128,7 @@ def create_meeting(request: schemas.Meeting, files: List[UploadFile], db: Sessio
 def delete_meeting(id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to delete meetings")
 
@@ -152,7 +152,7 @@ def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], d
                    token: str = Depends(oauth2_scheme)):
     current_user_email = oauth2.get_current_user(token=token)
     user = db.query(models.Person).filter(models.Person.email == current_user_email).first()
-    if user.type != '系助理' and user.email != 'admin@admin':
+    if user.type != '系助理':
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail=f"You have no authorization to update meetings")
 
