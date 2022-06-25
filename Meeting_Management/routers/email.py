@@ -21,32 +21,16 @@ async def send_email_asynchronous(id: int, db: Session = Depends(get_db), token:
                             detail=f"You have no authorization to get meetings")
 
     meeting = db.query(models.Meeting).get(id)
-    chair_id_email = db.query(models.Person).get(meeting.chair_id).email
-    chair_id_name = db.query(models.Person).get(meeting.chair_id).name
-    minute_taker_id_email = db.query(models.Person).get(meeting.minute_taker_id).email
-    minute_taker_id_name = db.query(models.Person).get(meeting.minute_taker_id).name
-    attendees = db.query(models.Meeting).get(id).attendees
-    email_list = []
-    name_list = []
-    email_list.append(chair_id_email)
-    email_list.append(minute_taker_id_email)
-    email_list.append('gold90321@gmail.com')
-    name_list.append(chair_id_name)
-    name_list.append(minute_taker_id_name)
-    name_list.append('高銘宏')
-    for attendee in attendees:
-        attendee_email = db.query(models.Person).get(attendee.id).email
-        attendee_name = db.query(models.Person).get(attendee.id).name
-        email_list.append(attendee_email)
-        name_list.append(attendee_name)
+    if meeting.first() == null:
+        return 'empty mail'
+    attendees = db.query(models.Attendee).filter_by(meeting_id=id)
+    names = [att.name for att in meeting.attendees] + [meeting.chair.name] + [meeting.minute_taker.name]
+    recipients = [att.email for att in meeting.attendees] + [meeting.chair.email] + [meeting.minute_taker.email]
 
-    meeting_information = []
-    meeting_information.append(meeting.title)
-    meeting_information.append(meeting.time)
-    meeting_information.append(meeting.location)
+    information = [meeting.title, meeting.time, meeting.location]
 
-    await send_email.send_email_async('Hello, you have a upcoming meeting.', email_list,
-                                      {'name': name_list, 'meeting_information': meeting_information})
+    await send_email.send_email_async('Hello, you have a upcoming meeting.', recipients,
+                                      {'name': names, 'information': information})
     return 'Success'
 
 
@@ -60,29 +44,14 @@ def send_email_backgroundtasks(background_tasks: BackgroundTasks, id: int, db: S
                             detail=f"You have no authorization to get meetings")
 
     meeting = db.query(models.Meeting).get(id)
-    chair_id_email = db.query(models.Person).get(meeting.chair_id).email
-    chair_id_name = db.query(models.Person).get(meeting.chair_id).name
-    minute_taker_id_email = db.query(models.Person).get(meeting.minute_taker_id).email
-    minute_taker_id_name = db.query(models.Person).get(meeting.minute_taker_id).name
-    attendees = db.query(models.Meeting).get(id).attendees
-    email_list = []
-    name_list = []
-    email_list.append(chair_id_email)
-    email_list.append(minute_taker_id_email)
-    email_list.append('gold90321@gmail.com')
-    name_list.append(chair_id_name)
-    name_list.append(minute_taker_id_name)
-    name_list.append('高銘宏')
-    for attendee in attendees:
-        attendee_email = db.query(models.Person).get(attendee.id).email
-        attendee_name = db.query(models.Person).get(attendee.id).name
-        email_list.append(attendee_email)
-        name_list.append(attendee_name)
+    if meeting.first() == null:
+        return 'empty mail'
+    attendees = db.query(models.Attendee).filter_by(meeting_id=id)
+    names = [att.name for att in meeting.attendees] + [meeting.chair.name] + [meeting.minute_taker.name]
+    recipients = [att.email for att in meeting.attendees] + [meeting.chair.email] + [meeting.minute_taker.email]
 
-    meeting_information = []
-    meeting_information.append(meeting.title)
-    meeting_information.append(meeting.time)
-    meeting_information.append(meeting.location)
-    send_email.send_email_background(background_tasks, 'Hello, you have a upcoming meeting.', email_list,
-                                     {'name': name_list, 'meeting_information': meeting_information})
+    information = [meeting.title, meeting.time, meeting.location]
+
+    send_email.send_email_background(background_tasks, 'Hello, you have a upcoming meeting.', recipients,
+                                     {'name': names, 'information': information})
     return 'Success'

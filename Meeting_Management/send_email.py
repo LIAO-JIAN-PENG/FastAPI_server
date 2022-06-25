@@ -1,6 +1,9 @@
 import os
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, Request
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from pydantic import EmailStr, BaseModel
+from typing import List
+from .main import templates
 
 
 parent_dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -19,43 +22,36 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email_async(subject: str, email_to: list, body: dict):
-    names = []
-    names = body['name']
-    meeting_information = []
-    meeting_information = body['meeting_information']
-    i = 0
-    for name in names:
-        message = MessageSchema(
-            subject=subject,
-            recipients=[email_to[i]],
-            #body='hello, everyone', # 可以傳入文字區域的string
-            # 傳入html區域的變數
-            template_body={'name': name, 'meeting_title': meeting_information[0], 'meeting_time': meeting_information[1]
-                           , 'meeting_location': meeting_information[2]},
-            subtype='html',
-        )
-        fm = FastMail(conf)
-        await fm.send_message(message, template_name="email_template.html")
-        i = i + 1
+async def send_email_async(subject: str, recipients: List[EmailStr], body: dict):
+    html = templates.TemplateResponse("email_template.html",
+                                      {'request': Request, 'name': body['name'], 'meeting_title': body['information'][0],
+                                       'meeting_time': body['information'][1]
+                                          , 'meeting_location': body['information'][2]})
+    print(recipients)
+    message = MessageSchema(
+        subject=subject,
+        recipients=recipients,
+        body=str(html),
+        subtype="html"
+    )
+
+    fm = FastMail(conf)
+    await fm.send_message(message)
 
 
-def send_email_background(background_tasks: BackgroundTasks, subject: str, email_to: list, body: dict):
-    names = []
-    names = body['name']
-    meeting_information = []
-    meeting_information = body['meeting_information']
-    i = 0
-    for name in names:
-        message = MessageSchema(
-            subject=subject,
-            recipients=[email_to[i]],
-            # body='hello, everyone', # 可以傳入文字區域的string
-            # 傳入html區域的變數
-            template_body={'name': name, 'meeting_title': meeting_information[0], 'meeting_time': meeting_information[1]
-                           , 'meeting_location': meeting_information[2]},
-            subtype='html',
-        )
-        fm = FastMail(conf)
-        background_tasks.add_task(fm.send_message, message, template_name='email_template.html')
-        i = i + 1
+def send_email_background(subject: str, recipients: List[EmailStr], body: dict):
+    html = templates.TemplateResponse("email_template.html",
+                                      {'request': Request, 'name': body['name'],
+                                       'meeting_title': body['information'][0],
+                                       'meeting_time': body['information'][1]
+                                          , 'meeting_location': body['information'][2]})
+    print(recipients)
+    message = MessageSchema(
+        subject=subject,
+        recipients=recipients,
+        body=str(html),
+        subtype="html"
+    )
+
+    fm = FastMail(conf)
+    fm.send_message(message)

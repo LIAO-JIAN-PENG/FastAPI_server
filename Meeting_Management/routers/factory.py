@@ -21,7 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 faker = Faker('zh_TW')
 
 
-@router.get('/person/{count}', response_model=List[schemas.PersonShow])
+@router.get('/person/{count}', response_model=List[schemas.Person])
 def gen_people(count: int, db: Session = Depends(get_db)):
 
     people = []
