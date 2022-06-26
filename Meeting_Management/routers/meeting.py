@@ -174,6 +174,10 @@ def update_meeting(id: int, request: schemas.Meeting, files: List[UploadFile], d
     exist_attendee = db.query(models.Person).filter(models.Person.id.in_(attendees_id)).all()
     exist_id = [attendee.id for attendee in exist_attendee]
 
+    if len(set(attendees_id)) != len(attendees_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Person (chair_id, minute_id, attendee_id) is repeat")
+
     if len(exist_attendee) != len(attendees_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Person with id {set(attendees_id) - set(exist_id)} not found")

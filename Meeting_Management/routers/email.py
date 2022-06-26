@@ -25,7 +25,6 @@ router = APIRouter(
     tags=['email']
 )
 
-
 get_db = database.get_db
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -40,7 +39,7 @@ async def send_email_notice(id: int, db: Session = Depends(get_db), token: str =
 
     meeting = db.query(models.Meeting).get(id)
     if not meeting:
-         return 'empty mail'
+        return 'empty mail'
     attendees = db.query(models.Attendee).filter_by(meeting_id=id)
     chair = [meeting.chair.name]
     minute_taker = [meeting.minute_taker.name]
@@ -76,16 +75,15 @@ async def send_email_result(id: int, db: Session = Depends(get_db), token: str =
     minute_taker = [meeting.minute_taker.name]
     recipients = [att.email for att in meeting.attendees] + [meeting.chair.email] + [meeting.minute_taker.email]
     information = [meeting.title, meeting.time, meeting.location, meeting.chair_speech]
-    annnouncements = db.query(models.Announcement).filter_by(meeting_id=id)
+    announcements = db.query(models.Announcement).filter_by(meeting_id=id)
     extempores = db.query(models.Extempore).filter_by(meeting_id=id)
     motions = db.query(models.Motion).filter_by(meeting_id=id)
-
 
     message = MessageSchema(
         subject="The meeting result is here",
         recipients=recipients,
         template_body={'information': information, 'attendees': attendees, 'chair': chair, 'minute_taker': minute_taker,
-                       'announcements': annnouncements, 'extempores': extempores, 'motions': motions}
+                       'announcements': announcements, 'extempores': extempores, 'motions': motions}
     )
 
     fm = FastMail(conf)
