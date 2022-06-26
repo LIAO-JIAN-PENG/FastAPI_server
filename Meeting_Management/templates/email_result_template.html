@@ -1,0 +1,61 @@
+<meta charset="utf-8">
+<h1>會議：{{ information[0] }}</h1>
+<h2>會議資訊</h2>
+<p>
+    時 間： {{ information[1] }}
+</p>
+<p>地 點：{{ information[2] }}</p>
+<p>主 席：{{ chair[0] }}</p>
+<p>紀 錄：{{minute_taker[0] }}</p>
+<p>與 會 人 員：
+    {% for attendee in attendees.filter_by(is_member=True) %}
+        {% if loop.index != 1 %}、{% endif %}
+        {% if attendee.is_present %}
+            {{ attendee.attendee.name }}
+        {% else %}
+            {{ attendee.attendee.name }}（缺席）
+        {% endif %}
+    {% endfor %}
+</p>
+<p>列 席 人 員：
+    {% for attendee in attendees.filter_by(is_member=False) %}
+        {% if loop.index != 1 %}、{% endif %}
+        {% if attendee.is_present %}
+            {{ attendee.attendee.name }}
+        {% else %}
+            {{ attendee.attendee.name }}（缺席）
+        {% endif %}
+    {% endfor %}
+</p>
+<hr>
+<p>主 席 致 詞：<pre>   {{ information[3] }}</pre></p>
+<hr>
+<p>報 告 事 項：
+    {% for announcement in announcements %}
+        {% if loop.index != 1 %}、{% endif %}
+          <pre>   {{ announcement.content }}</pre>
+    {% endfor %}
+</p>
+<hr>
+<p>臨 時 動 議：
+    {% for extempore in extempores %}
+        {% if loop.index != 1 %}、{% endif %}
+          <pre>   {{ extempore.content }}</pre>
+    {% endfor %}
+</p>
+<hr>
+<p>動 議：<br>
+    {% for motion in motions %}
+        {% if loop.index != 1 %}、{% endif %}
+          <pre>   描述：{{ motion.description }}</pre>
+          <pre>   內容：{{ motion.content }}</pre>
+          <pre>   狀態：{{ motion.status }}</pre>
+          <pre>   決議：{{ motion.resolution }}</pre>
+          <pre>   執行：{{ motion.execution }}</pre>
+    {% endfor %}
+</p>
+<hr>
+
+
+
+

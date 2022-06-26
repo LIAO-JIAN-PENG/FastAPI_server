@@ -1,10 +1,9 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
 from . import models
 from .database import engine
 from os import path
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
@@ -26,7 +25,6 @@ app.add_middleware(
 
 UPLOAD_FOLDER = path.join(app.root_path, 'static', 'uploads')
 Path(UPLOAD_FOLDER).mkdir(parents=True, exist_ok=True)
-templates = Jinja2Templates(directory="templates")
 
 models.Base.metadata.create_all(bind=engine)
 

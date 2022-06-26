@@ -1,0 +1,34 @@
+<meta charset="utf-8">
+<h1>會議：{{ information[0] }}</h1>
+<h2>會議資訊</h2>
+<p>
+    時 間： {{ information[1] }}
+</p>
+<p>地 點：{{ information[2] }}</p>
+<p>主 席：{{ chair[0] }}</p>
+<p>紀 錄：{{minute_taker[0] }}</p>
+<p>與會人員：
+    {% for attendee in attendees.filter_by(is_member=True) %}
+        {% if loop.index != 1 %}、{% endif %}
+        {% if attendee.is_present %}
+            {{ attendee.attendee.name }}
+        {% else %}
+            {{ attendee.attendee.name }}（缺席）
+        {% endif %}
+    {% endfor %}
+</p>
+<p>列席人員：
+    {% for attendee in attendees.filter_by(is_member=False) %}
+        {% if loop.index != 1 %}、{% endif %}
+        {% if attendee.is_present %}
+            {{ attendee.attendee.name }}
+        {% else %}
+            {{ attendee.attendee.name }}（缺席）
+        {% endif %}
+    {% endfor %}
+</p>
+
+
+
+
+
