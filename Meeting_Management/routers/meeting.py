@@ -7,7 +7,7 @@ from sqlalchemy import desc, or_
 from . import file as file_route
 from . import authentication
 from .. import database, models, schemas, oauth2, JWTtoken
-from ..myOuth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/meeting',

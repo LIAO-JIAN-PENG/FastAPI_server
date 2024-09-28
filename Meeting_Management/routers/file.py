@@ -6,7 +6,7 @@ from fastapi import APIRouter, UploadFile, Depends, responses, HTTPException, st
 from ..main import UPLOAD_FOLDER
 from .. import database, models, oauth2, schemas
 from sqlalchemy.orm import Session
-from ..myOuth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/file',

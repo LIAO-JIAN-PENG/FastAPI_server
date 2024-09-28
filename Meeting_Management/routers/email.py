@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from .. import database, models, oauth2
 from sqlalchemy.orm import Session
-from ..myOuth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 
 parent_dir_path = os.path.dirname(os.path.dirname(__file__))
 
@@ -14,8 +14,8 @@ conf = ConnectionConfig(
     MAIL_PORT="587",
     MAIL_SERVER="smtp.gmail.com",
     MAIL_FROM_NAME="NUK CSIE Meeting Management",
-    MAIL_TLS=True,
-    MAIL_SSL=False,
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
     USE_CREDENTIALS=True,
     TEMPLATE_FOLDER=parent_dir_path + '/templates'
 )

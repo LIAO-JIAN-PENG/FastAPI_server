@@ -8,7 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 from faker import Faker
 import random
-from ..myOuth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/factory',

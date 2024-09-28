@@ -1,7 +1,7 @@
 from .. import database, models, JWTtoken, schemas
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
-from ..myOuth2 import OAuth2PasswordRequestForm
+from ..myOauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 import secrets
 router = APIRouter(

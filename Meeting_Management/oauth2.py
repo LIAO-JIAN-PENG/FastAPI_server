@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-from .myOuth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 from . import JWTtoken
 
 

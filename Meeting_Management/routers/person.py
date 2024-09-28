@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, encoders
 from .. import database, models, schemas, oauth2
 from sqlalchemy.orm import Session
 from ..repository import person as person_repository
-from ..myOuth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix='/person',
